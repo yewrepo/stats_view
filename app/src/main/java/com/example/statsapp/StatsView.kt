@@ -74,14 +74,23 @@ class StatsView @JvmOverloads constructor(
                 textPaint
             )
 
-            for (datum in data) {
+            for ((index, datum) in data.withIndex()) {
                 val angle = 360f * datum
-                paint.color =
-                    colors.getOrNull(Random.nextInt(0, colors.size - 1)) ?: getRandomColor()
-                canvas?.drawArc(oval, startFrom, angle, false, paint)
+                drawArc(angle, index, canvas, startFrom)
                 startFrom += angle
             }
+            drawArc(data[0], 0, canvas, -90f)
         }
+    }
+
+    private fun drawArc(
+        angle: Float,
+        index: Int,
+        canvas: Canvas?,
+        startFrom: Float
+    ) {
+        paint.color = colors.getOrNull(index) ?: getRandomColor()
+        canvas?.drawArc(oval, startFrom, angle, false, paint)
     }
 
     private fun getRandomColor(): Int {
