@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import androidx.core.content.withStyledAttributes
 import kotlin.random.Random
@@ -19,7 +20,7 @@ class StatsView @JvmOverloads constructor(
 
     var data: List<Float> = emptyList()
         set(value) {
-            field = value
+            field = calcWeight(value)
             invalidate()
         }
 
@@ -95,5 +96,14 @@ class StatsView @JvmOverloads constructor(
 
     private fun getRandomColor(): Int {
         return Random.nextInt(0xFF000000.toInt(), 0xFFFFFFFF.toInt())
+    }
+
+    private fun calcWeight(values: List<Float>): List<Float> {
+        val sum = values.sum()
+        return mutableListOf<Float>().also { result ->
+            for (v in values) {
+                result.add(v / sum)
+            }
+        }
     }
 }
