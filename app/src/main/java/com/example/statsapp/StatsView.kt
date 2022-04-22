@@ -1,13 +1,18 @@
 package com.example.statsapp
 
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.util.Log
 import android.view.View
+import android.view.animation.AnimationSet
+import android.view.animation.LinearInterpolator
+import androidx.core.animation.addListener
+import androidx.core.animation.doOnEnd
 import androidx.core.content.withStyledAttributes
 import kotlin.random.Random
 
@@ -21,12 +26,17 @@ class StatsView @JvmOverloads constructor(
     var data: List<Float> = emptyList()
         set(value) {
             field = calcWeight(value)
-            invalidate()
+            update()
         }
 
     private var oval: RectF = RectF()
     private var center = PointF(0f, 0f)
 
+    private var progressAnimator: ValueAnimator? = null
+    private var angleAnimator: ValueAnimator? = null
+    private var drawDot: Boolean = false
+    private var progress = 0f
+    private var angle = 0f
     private var radius = 0f
     private var lineWidth = 5.px(context).toFloat()
     private var fontSize = 40.px(context).toFloat()
@@ -66,7 +76,7 @@ class StatsView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         if (data.isNotEmpty()) {
-            var startFrom = -90f
+            var startFrom = angle
 
             canvas?.drawText(
                 "%.2f%%".format(data.sum() * 100),
@@ -80,7 +90,9 @@ class StatsView @JvmOverloads constructor(
                 drawArc(angle, index, canvas, startFrom)
                 startFrom += angle
             }
-            drawArc(data[0], 0, canvas, -90f)
+            if (drawDot) {
+                drawArc(data[0], 0, canvas, 0f)
+            }
         }
     }
 
@@ -91,7 +103,50 @@ class StatsView @JvmOverloads constructor(
         startFrom: Float
     ) {
         paint.color = colors.getOrNull(index) ?: getRandomColor()
-        canvas?.drawArc(oval, startFrom, angle, false, paint)
+        canvas?.drawArc(oval, startFrom, angle * progress, false, paint)
+    }
+
+    private fun update() {
+        clearCallbacks()
+
+        drawDot = false
+        progress = 0f
+
+        angleAnimator = ValueAnimator.ofFloat(0f, 360f).apply {
+            addUpdateListener { anim ->
+                angle = anim.animatedValue as Float
+                invalidate()
+            }
+        }
+
+        progressAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            addUpdateListener { anim ->
+                progress = anim.animatedValue as Float
+                invalidate()
+            }
+        }
+
+        AnimatorSet().also { set ->
+            set.playTogether(angleAnimator, progressAnimator)
+            set.duration = 1000
+            set.interpolator = LinearInterpolator()
+            set.doOnEnd {
+                drawDot = true
+            }
+        }.start()
+    }
+
+    private fun clearCallbacks() {
+        angleAnimator?.let {
+            it.removeAllListeners()
+            it.cancel()
+        }
+
+        progressAnimator?.let {
+            it.removeAllListeners()
+            it.cancel()
+        }
+
     }
 
     private fun getRandomColor(): Int {

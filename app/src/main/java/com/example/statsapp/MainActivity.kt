@@ -10,10 +10,10 @@ class MainActivity : AppCompatActivity() {
 
         val stats = findViewById<StatsView>(R.id.stats)
         stats.data = listOf(
-            100f,
             500f,
-            200f,
-            200f
+            500f,
+            500f,
+            500f
         )
     }
 }
