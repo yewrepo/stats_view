@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.example.statsapp.StatsView
+        android:id="@+id/first_stats"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_vertical|start"
+        android:layout_margin="8dp"
+        app:colors="@array/colors"
+        app:data="700,300,600,500"
+        app:fontSize="24dp"
+        app:lineWidth="20dp" />
+
+    <com.example.statsapp.StatsView
+        android:id="@+id/second_stats"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_vertical|end"
+        android:layout_margin="8dp"
+        app:colors="@array/colors"
+        app:data="900,100,300"
+        app:fontSize="24dp"
+        app:lineWidth="20dp" />
+</merge>
