@@ -49,6 +49,16 @@ class StatsView @JvmOverloads constructor(
 
             val resId = getResourceId(R.styleable.StatsView_colors, 0)
             colors = resources.getIntArray(resId).toList()
+
+            val dataString = this.getString(R.styleable.StatsView_data)
+            data = dataString?.let { text ->
+                val result = mutableListOf<Float>()
+                return@let text.split(',', ignoreCase = false, limit = 0)
+                    .map {
+                        it.toFloat()
+                    }
+                    .toCollection(result)
+            } ?: emptyList()
         }
     }
 

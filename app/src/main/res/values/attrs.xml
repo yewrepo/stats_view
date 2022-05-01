@@ -4,5 +4,6 @@
         <attr name="lineWidth" format="dimension|reference" />
         <attr name="fontSize" format="dimension|reference" />
         <attr name="colors" format="reference" />
+        <attr name="data" format="string" />
     </declare-styleable>
 </resources>
